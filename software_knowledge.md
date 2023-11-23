@@ -34,6 +34,7 @@
 - bs4
 - d3.js
 - react.js
+- droidscript
 
 
 
@@ -52,3 +53,7 @@
 - html
 - css
 - javascript/node
+- python
+- C#
+- C/C++
+- Java
