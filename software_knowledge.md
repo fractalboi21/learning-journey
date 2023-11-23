@@ -52,4 +52,3 @@
 - html
 - css
 - javascript/node
-- 
