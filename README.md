@@ -1,9 +1,9 @@
 # learning-journey
-Compilation of resources for reference.
+List of everything I know 
 
-web dev
-3d stuff
-bot dev
-API integration
-SQL
+-web dev
+-3d stuff
+-bot dev
+-API integration
+-SQL
 
