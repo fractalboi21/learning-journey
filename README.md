@@ -7,4 +7,4 @@ List of everything I know
 - API integration
 - SQL
 
-![https://cdn.discordapp.com/emojis/1161560073747845190.webp?size=128&quality=lossless]
+
