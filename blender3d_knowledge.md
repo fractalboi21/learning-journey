@@ -13,3 +13,5 @@
 - rendering 
 - moderate lvl video editing 
 - texture maps
+
+# should add more..... 
