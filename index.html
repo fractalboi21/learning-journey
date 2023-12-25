@@ -7,10 +7,12 @@
         body {
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             background-color: #f0f0f0;
+            overflow: hidden;
         }
 
         canvas {
@@ -20,7 +22,9 @@
     <title>Shooting Game with Character</title>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <label for="speedInput">Projectile Speed:</label>
+    <input type="number" id="speedInput" value="5" min="1" step="1">
+    <canvas id="gameCanvas"></canvas>
 
     <script>
         const settings = {
@@ -36,6 +40,25 @@
             projectiles: [],
             mousePressed: false
         };
+
+        // Set canvas size to match window size
+        settings.canvas.width = window.innerWidth;
+        settings.canvas.height = window.innerHeight;
+
+        const speedInput = document.getElementById('speedInput');
+        speedInput.addEventListener('input', handleSpeedChange);
+
+        function handleSpeedChange() {
+            settings.character.speed = parseInt(speedInput.value, 10) || 1;
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        function handleResize() {
+            // Adjust canvas size on window resize
+            settings.canvas.width = window.innerWidth;
+            settings.canvas.height = window.innerHeight;
+        }
 
         document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
@@ -90,8 +113,8 @@
             const { ctx, projectiles } = settings;
             for (const projectile of projectiles) {
                 ctx.beginPath();
-                ctx.rect(projectile.x, projectile.y, 5, 10);
-                ctx.fillStyle = '#FF0000';
+                ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = projectile.color;
                 ctx.fill();
                 ctx.closePath();
             }
@@ -107,6 +130,12 @@
 
                 // Adjust the speed of projectiles
                 projectile.speed -= 0.02;
+
+                // Change properties of projectiles after shooting
+                if (projectile.shouldChange && projectile.speed > 2) {
+                    projectile.color = getRandomColor();
+                    projectile.shouldChange = false; // Prevent further changes
+                }
             }
 
             // Remove projectiles that are out of the canvas
@@ -123,10 +152,21 @@
                         x: settings.character.x,
                         y: settings.character.y,
                         angle: angle,
-                        speed: 0.01
+                        speed: settings.character.speed,
+                        color: getRandomColor(),
+                        shouldChange: true // Allow changes for this projectile
                     });
                 }
             }
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
         function draw() {
