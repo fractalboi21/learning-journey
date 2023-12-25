@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+    <title>Shooting Game with Character</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const settings = {
+            canvas: document.getElementById('gameCanvas'),
+            ctx: document.getElementById('gameCanvas').getContext('2d'),
+            character: {
+                x: 400,
+                y: 300,
+                radius: 15,
+                color: '#0095DD',
+                speed: 5
+            },
+            projectiles: [],
+            mousePressed: false
+        };
+
+        document.addEventListener('keydown', keyDownHandler, false);
+        document.addEventListener('keyup', keyUpHandler, false);
+        document.addEventListener('mousedown', mouseDownHandler, false);
+        document.addEventListener('mouseup', mouseUpHandler, false);
+        document.addEventListener('mousemove', mouseMoveHandler, false);
+
+        function keyDownHandler(e) {
+            if (e.key === 'Right' || e.key === 'ArrowRight') {
+                settings.character.x += settings.character.speed;
+            } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+                settings.character.x -= settings.character.speed;
+            } else if (e.key === 'Down' || e.key === 'ArrowDown') {
+                settings.character.y += settings.character.speed;
+            } else if (e.key === 'Up' || e.key === 'ArrowUp') {
+                settings.character.y -= settings.character.speed;
+            }
+        }
+
+        function keyUpHandler(e) {
+            // Handle any keyup actions if needed
+        }
+
+        function mouseDownHandler(e) {
+            if (e.button === 0) { // Left mouse button
+                settings.mousePressed = true;
+            }
+        }
+
+        function mouseUpHandler(e) {
+            if (e.button === 0) { // Left mouse button
+                settings.mousePressed = false;
+            }
+        }
+
+        function mouseMoveHandler(e) {
+            const rect = settings.canvas.getBoundingClientRect();
+            settings.character.x = e.clientX - rect.left;
+            settings.character.y = e.clientY - rect.top;
+        }
+
+        function drawCharacter() {
+            const { ctx, character } = settings;
+            ctx.beginPath();
+            ctx.arc(character.x, character.y, character.radius, 0, Math.PI * 2);
+            ctx.fillStyle = character.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawProjectiles() {
+            const { ctx, projectiles } = settings;
+            for (const projectile of projectiles) {
+                ctx.beginPath();
+                ctx.rect(projectile.x, projectile.y, 5, 10);
+                ctx.fillStyle = '#FF0000';
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function update() {
+            const { projectiles, mousePressed } = settings;
+
+            // Update projectile positions
+            for (const projectile of projectiles) {
+                projectile.x += Math.cos(projectile.angle) * projectile.speed;
+                projectile.y += Math.sin(projectile.angle) * projectile.speed;
+
+                // Adjust the speed of projectiles
+                projectile.speed -= 0.02;
+            }
+
+            // Remove projectiles that are out of the canvas
+            projectiles.forEach((projectile, index) => {
+                if (projectile.y < 0 || projectile.x < 0 || projectile.x > settings.canvas.width || projectile.y > settings.canvas.height) {
+                    projectiles.splice(index, 1);
+                }
+            });
+
+            // Shoot projectile
+            if (mousePressed) {
+                for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+                    projectiles.push({
+                        x: settings.character.x,
+                        y: settings.character.y,
+                        angle: angle,
+                        speed: 0.01
+                    });
+                }
+            }
+        }
+
+        function draw() {
+            const { ctx } = settings;
+            ctx.clearRect(0, 0, settings.canvas.width, settings.canvas.height);
+            drawCharacter();
+            drawProjectiles();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
