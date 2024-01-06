@@ -9,3 +9,6 @@ this list is still in development lol 😆
 - SQL
 
 
+https://file.io/cpsKcYwT565d
+
+ds record pdf anon file drop link 
